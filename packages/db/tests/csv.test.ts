@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { csvCell, ledgerToCsv } from '../src/domain/csv';
+import { csvCell, ledgerToCsv, pipelineToCsv } from '../src/domain/csv';
+import type { ProspectRow } from '../src/domain/pipeline';
 import type { LedgerMonthRow } from '../src/domain/public-ledger';
 
 const row = (over: Partial<LedgerMonthRow> = {}): LedgerMonthRow => ({
@@ -49,5 +50,43 @@ describe('ledgerToCsv', () => {
     const csv = ledgerToCsv([row({ month: '2026-09-01' }), row({ month: '2026-07-01' })], 'INR');
     const months = csv.trimEnd().split('\r\n').slice(1).map((l) => l.slice(0, 7));
     expect(months).toEqual(['2026-07', '2026-09']);
+  });
+});
+
+describe('pipelineToCsv', () => {
+  const prospect = (over: Partial<ProspectRow> = {}): ProspectRow => ({
+    id: 'p',
+    company: 'Acme Campus',
+    contactName: 'Priya',
+    contactEmail: 'priya@acme.example',
+    channel: 'Cold email',
+    emailedOn: '2026-09-01',
+    repliedOn: '2026-09-03',
+    demoOn: null,
+    secondCallOn: null,
+    wonOn: null,
+    lostOn: null,
+    contractValueMinor: null,
+    note: '',
+    example: false,
+    ...over,
+  });
+
+  it('writes the header, the derived stage and status, and blank unset dates', () => {
+    const lines = pipelineToCsv([prospect()]).trimEnd().split('\r\n');
+    expect(lines[0]).toBe(
+      'company,contact_name,contact_email,channel,stage,status,emailed_on,replied_on,demo_on,second_call_on,contract_on,lost_on,contract_value,example,note',
+    );
+    expect(lines[1]).toBe('Acme Campus,Priya,priya@acme.example,Cold email,Replied,open,2026-09-01,2026-09-03,,,,,,false,');
+  });
+
+  it('writes contract value in major units and guards formula-like text', () => {
+    const csv = pipelineToCsv([
+      prospect({ company: '=HYPERLINK("x")', wonOn: '2026-09-20', contractValueMinor: 4_000_050, note: 'a, b' }),
+    ]);
+    const line = csv.trimEnd().split('\r\n')[1]!;
+    expect(line.startsWith(`"'=HYPERLINK(""x"")"`)).toBe(true);
+    expect(line).toContain(',Contract,won,');
+    expect(line).toContain(',40000.50,false,"a, b"');
   });
 });

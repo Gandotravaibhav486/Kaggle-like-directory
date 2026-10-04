@@ -103,6 +103,7 @@ The owner-only **Pipeline** tab (`/competitions/<slug>/pipeline`) tracks B2B out
 1. Add a prospect with the company and the date you emailed them (channel, contact, note optional).
 2. When they move on, click **→ <next stage>** on their row (dated today), or open **Edit** to fill or back-date any stage. Stage dates must not go backwards, and a contract value can only be set once a contract date is set.
 3. The page shows how many prospects reached each stage, conversion from the previous stage and from the first email, median days between stages, and the same funnel for each outreach month.
+4. **Export CSV** downloads every prospect with its stage, status, stage dates and contract value. It opens directly in Excel or Google Sheets.
 
 A prospect counts as reaching a stage if that stage or any later one has a date, so a skipped stage (demo straight to contract) still counts as passed. The pipeline is private, scoped to the season, and is not included in the public boards or in the season JSON export. Placeholder prospects can be marked **Example**.
 

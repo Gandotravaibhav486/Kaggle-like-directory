@@ -1,4 +1,5 @@
 import { collectionRate, margin, netMinor, totalExpensesMinor } from './ledger';
+import { furthestStageIndex, PIPELINE_STAGES, prospectStatus, type ProspectRow } from './pipeline';
 import type { LedgerMonthRow } from './public-ledger';
 
 export const LEDGER_CSV_HEADER = [
@@ -53,6 +54,51 @@ export function ledgerToCsv(rows: LedgerMonthRow[], _currency: string): string {
         csvCell(ratio(margin(r)), { guard: false }),
         csvCell(ratio(collectionRate(r)), { guard: false }),
         csvCell(r.sharedPublicly ? 'true' : 'false'),
+        csvCell(r.note),
+      ].join(','),
+    );
+  }
+  return lines.join('\r\n') + '\r\n';
+}
+
+export const PIPELINE_CSV_HEADER = [
+  'company',
+  'contact_name',
+  'contact_email',
+  'channel',
+  'stage',
+  'status',
+  'emailed_on',
+  'replied_on',
+  'demo_on',
+  'second_call_on',
+  'contract_on',
+  'lost_on',
+  'contract_value',
+  'example',
+  'note',
+] as const;
+
+/** One row per prospect in the given order; dates as YYYY-MM-DD, contract value in major units. */
+export function pipelineToCsv(rows: ProspectRow[]): string {
+  const lines = [PIPELINE_CSV_HEADER.join(',')];
+  for (const r of rows) {
+    lines.push(
+      [
+        csvCell(r.company),
+        csvCell(r.contactName),
+        csvCell(r.contactEmail),
+        csvCell(r.channel),
+        csvCell(PIPELINE_STAGES[furthestStageIndex(r)]!.label),
+        csvCell(prospectStatus(r)),
+        csvCell(r.emailedOn),
+        csvCell(r.repliedOn),
+        csvCell(r.demoOn),
+        csvCell(r.secondCallOn),
+        csvCell(r.wonOn),
+        csvCell(r.lostOn),
+        csvCell(r.contractValueMinor === null ? '' : money(r.contractValueMinor), { guard: false }),
+        csvCell(r.example ? 'true' : 'false'),
         csvCell(r.note),
       ].join(','),
     );

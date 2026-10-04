@@ -6,12 +6,14 @@ import { uniq } from '../helpers/unique';
 const C = `/competitions/${DEFAULT_SLUG}`;
 
 test.describe('arena: sales pipeline', () => {
-  test('a visitor sees the private notice and no Pipeline tab', async ({ browser }) => {
+  test('a visitor sees the private notice, no Pipeline tab, and the CSV route 404s', async ({ browser }) => {
     const visitor = await browser.newContext();
     const page = await visitor.newPage();
     await page.goto(`${ARENA}${C}/pipeline`);
     await expect(page.getByTestId('owner-only-notice')).toBeVisible();
     await expect(page.getByRole('link', { name: 'Pipeline', exact: true })).toHaveCount(0);
+    const res = await page.goto(`${ARENA}${C}/pipeline/export.csv`);
+    expect(res?.status()).toBe(404);
     await visitor.close();
   });
 
@@ -51,5 +53,16 @@ test.describe('arena: sales pipeline', () => {
     await expect(page.getByTestId('prospect-row').filter({ hasText: company }).getByTestId('prospect-stage')).toHaveText(
       'Demo',
     );
+
+    const [download] = await Promise.all([
+      page.waitForEvent('download'),
+      page.getByRole('link', { name: 'Export CSV' }).click(),
+    ]);
+    expect(download.suggestedFilename()).toBe(`${DEFAULT_SLUG}-pipeline.csv`);
+    const chunks: Buffer[] = [];
+    for await (const chunk of (await download.createReadStream())!) chunks.push(chunk as Buffer);
+    const lines = Buffer.concat(chunks).toString('utf-8').replace(/^\uFEFF/, '').trim().split('\r\n');
+    expect(lines[0]).toContain('company,contact_name,contact_email,channel,stage,status');
+    expect(lines.find((l) => l.startsWith(company))).toContain(',Demo,open,2026-09-10,');
   });
 });

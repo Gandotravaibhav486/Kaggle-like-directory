@@ -9,7 +9,7 @@ import {
   type ProspectRow,
 } from '@mi/db/domain';
 import { getCompetitionBySlug, listProspects } from '@mi/db/queries';
-import { Badge, Card, EmptyState, Money, Num, OwnerOnly, Percent, ScrollTable } from '@mi/ui';
+import { Badge, Card, EmptyState, LinkButton, Money, Num, OwnerOnly, Percent, ScrollTable } from '@mi/ui';
 import { db } from '@/lib/db';
 import { getViewer } from '@/lib/guards';
 import { InlineDisclosure } from '@/components/inline-disclosure';
@@ -51,9 +51,16 @@ export default async function PipelinePage({ params }: { params: Promise<{ slug:
 
   return (
     <div>
-      <div className="mb-6 flex flex-wrap items-center gap-3">
-        <h1 className="text-h1 font-semibold text-fg">Pipeline</h1>
-        <Badge variant="private">Private</Badge>
+      <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
+        <div className="flex items-center gap-3">
+          <h1 className="text-h1 font-semibold text-fg">Pipeline</h1>
+          <Badge variant="private">Private</Badge>
+        </div>
+        {prospects.length > 0 && (
+          <LinkButton href={`/competitions/${slug}/pipeline/export.csv`} variant="secondary" size="sm">
+            Export CSV
+          </LinkButton>
+        )}
       </div>
 
       {prospects.length === 0 ? (
