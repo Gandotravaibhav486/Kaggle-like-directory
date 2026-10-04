@@ -1,0 +1,31 @@
+{
+  "name": "mockinterview-sites",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@12.5.1",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "dev": "concurrently -k -n db,arena,lab -c gray,blue,green \"pnpm --filter @mi/db server\" \"wait-on -t 120000 http-get://127.0.0.1:54330/ready && pnpm --filter @mi/arena dev\" \"wait-on -t 120000 http-get://127.0.0.1:54330/ready && pnpm --filter @mi/lab dev\"",
+    "db:server": "pnpm --filter @mi/db server",
+    "build": "pnpm -r --filter \"./apps/*\" build",
+    "lint": "pnpm -r lint",
+    "typecheck": "pnpm -r typecheck",
+    "test": "pnpm --filter @mi/db test",
+    "test:e2e": "pnpm build && playwright test",
+    "test:screens": "playwright test --project=screens",
+    "db:generate": "pnpm --filter @mi/db generate",
+    "db:migrate": "pnpm --filter @mi/db migrate",
+    "db:seed": "pnpm --filter @mi/db seed",
+    "db:reset": "pnpm --filter @mi/db reset"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.63.0",
+    "@types/node": "^26",
+    "concurrently": "^10.0.5",
+    "tsx": "^4.23",
+    "typescript": "~5.9.3",
+    "wait-on": "^9.5.1"
+  }
+}

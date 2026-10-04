@@ -1,0 +1,33 @@
+{
+  "name": "@mi/auth",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@auth/drizzle-adapter": "^1.11.3",
+    "@mi/db": "workspace:*",
+    "next-auth": "5.0.0-beta.32",
+    "nodemailer": "^8.0.11"
+  },
+  "peerDependencies": {
+    "next": "^16.3",
+    "react": "^19.3"
+  },
+  "devDependencies": {
+    "@mi/config": "workspace:*",
+    "@types/node": "^26",
+    "@types/nodemailer": "^8.0.2",
+    "eslint": "^10.0.0",
+    "next": "16.3.8",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "typescript": "~5.9.3"
+  }
+}

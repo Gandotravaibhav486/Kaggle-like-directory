@@ -1,0 +1,12 @@
+export type Direction = 'higher' | 'lower';
+export type PageKind = 'overview' | 'description' | 'evaluation' | 'rules' | 'timeline';
+export const PAGE_KINDS: readonly PageKind[] = ['overview', 'description', 'evaluation', 'rules', 'timeline'] as const;
+export type ResourceKind = 'model' | 'service' | 'dataset' | 'tool' | 'platform' | 'channel';
+export const RESOURCE_KINDS: readonly ResourceKind[] = ['model', 'service', 'dataset', 'tool', 'platform', 'channel'] as const;
+export const THREAD_TAGS = ['scoring', 'product', 'reporting', 'growth', 'general'] as const;
+export type ThreadTag = (typeof THREAD_TAGS)[number];
+export const DEFAULT_COMPETITION_SLUG = 'mock-interview-v5';
+export const RESERVED_SLUGS = ['new', 'import', 'admin', 'api'] as const;
+export type AgentSource = 'claude_button' | 'pasted' | 'api';
+export type AuthorType = 'person' | 'agent';
+export type BoardSource = 'manual' | 'ledger_revenue';

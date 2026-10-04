@@ -1,0 +1,9 @@
+@import "@mi/config/tailwind/base.css";
+@import "@mi/ui/styles.css";
+@source "../../../../packages/ui/src";
+
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+}

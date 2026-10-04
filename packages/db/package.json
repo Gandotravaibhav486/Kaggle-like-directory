@@ -1,0 +1,42 @@
+{
+  "name": "@mi/db",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./schema": "./src/schema/index.ts",
+    "./domain": "./src/domain/index.ts",
+    "./domain/tokens": "./src/domain/tokens.ts",
+    "./queries": "./src/queries/index.ts",
+    "./season": "./src/season/index.ts",
+    "./seed": "./src/seed/index.ts",
+    "./migrate": "./src/migrate.ts"
+  },
+  "scripts": {
+    "server": "tsx scripts/local-pg.ts",
+    "generate": "drizzle-kit generate",
+    "migrate": "tsx scripts/migrate.ts",
+    "seed": "tsx scripts/seed.ts",
+    "reset": "tsx scripts/reset.ts",
+    "test": "vitest run",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "drizzle-orm": "^0.45.3",
+    "postgres": "^3.4.9",
+    "zod": "^4.6.5"
+  },
+  "devDependencies": {
+    "@electric-sql/pglite": "^0.5.8",
+    "@mi/config": "workspace:*",
+    "@types/node": "^26",
+    "drizzle-kit": "^0.31.11",
+    "embedded-postgres": "18.4.0-beta.17",
+    "eslint": "^10.0.0",
+    "tsx": "^4.23",
+    "typescript": "~5.9.3",
+    "vitest": "^5.0.3"
+  }
+}

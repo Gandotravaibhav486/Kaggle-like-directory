@@ -1,0 +1,3 @@
+/* Shared Tailwind v4 entry for both apps. Design tokens live in @mi/ui/styles.css. */
+@import "tailwindcss";
+@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));

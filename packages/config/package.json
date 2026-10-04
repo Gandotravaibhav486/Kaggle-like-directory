@@ -1,0 +1,29 @@
+{
+  "name": "@mi/config",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./tsconfig.base.json": "./tsconfig.base.json",
+    "./tsconfig.next.json": "./tsconfig.next.json",
+    "./eslint/base": "./eslint/base.mjs",
+    "./eslint/next": "./eslint/next.mjs",
+    "./tailwind/base.css": "./tailwind/base.css"
+  },
+  "dependencies": {
+    "@eslint/js": "^10.0.0",
+    "eslint-config-next": "16.3.8",
+    "globals": "^17.13.0",
+    "typescript-eslint": "^8.71.0"
+  },
+  "peerDependencies": {
+    "eslint": "^10",
+    "tailwindcss": "^4.3"
+  },
+  "peerDependenciesMeta": {
+    "tailwindcss": { "optional": true }
+  },
+  "devDependencies": {
+    "eslint": "^10.0.0"
+  }
+}
