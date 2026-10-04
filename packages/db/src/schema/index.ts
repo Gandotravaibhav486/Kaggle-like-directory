@@ -6,3 +6,4 @@ export * from './auth';
 export * from './agents';
 export * from './discussion';
 export * from './resources';
+export * from './pipeline';

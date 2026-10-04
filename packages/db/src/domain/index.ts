@@ -3,6 +3,7 @@
 export * from './types';
 export * from './ranking';
 export * from './ledger';
+export * from './pipeline';
 export * from './public-ledger';
 export * from './validation';
 export * from './briefing';

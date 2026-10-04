@@ -215,6 +215,80 @@ export const ledgerMonthInputSchema = z
 export type LedgerMonthInput = z.output<typeof ledgerMonthInputSchema>;
 
 // ---------------------------------------------------------------------------
+// sales pipeline
+
+const notFuture = (s: string) => s <= todayPlusOneUtc();
+
+const optionalStageDate = z.preprocess(
+  emptyToUndefined,
+  z
+    .string()
+    .refine(isValidIsoDate, 'Use a valid date (YYYY-MM-DD)')
+    .refine(notFuture, 'Date cannot be in the future')
+    .optional(),
+).transform((v) => v ?? null);
+
+/**
+ * Form field names: company, contactName, contactEmail, channel, emailedOn, repliedOn, demoOn,
+ * secondCallOn, wonOn, lostOn (YYYY-MM-DD), contractValue (major-unit decimal string), note, example.
+ */
+export const prospectInputSchema = z
+  .object({
+    company: z.string({ error: 'Company is required' }).trim().min(1, 'Company is required').max(120, 'Company is too long'),
+    contactName: z
+      .preprocess((v) => (v === undefined || v === null ? '' : v), z.string().trim().max(120, 'Name is too long'))
+      .default(''),
+    contactEmail: z
+      .preprocess(emptyToUndefined, z.email('Use a valid email address').max(320, 'Email is too long').optional())
+      .transform((v) => v ?? null),
+    channel: z
+      .preprocess((v) => (v === undefined || v === null ? '' : v), z.string().trim().max(60, 'Channel is too long'))
+      .default(''),
+    emailedOn: z.preprocess(
+      emptyToUndefined,
+      z
+        .string({ error: 'Outreach date is required' })
+        .refine(isValidIsoDate, 'Outreach date is required (YYYY-MM-DD)')
+        .refine(notFuture, 'Date cannot be in the future'),
+    ),
+    repliedOn: optionalStageDate,
+    demoOn: optionalStageDate,
+    secondCallOn: optionalStageDate,
+    wonOn: optionalStageDate,
+    lostOn: optionalStageDate,
+    contractValue: z
+      .preprocess(emptyToUndefined, moneyField.optional())
+      .transform((v) => v ?? null),
+    note: z
+      .preprocess((v) => (v === undefined || v === null ? '' : v), z.string().max(2000, 'Note is too long'))
+      .default(''),
+    example: booleanish.default(false),
+  })
+  .superRefine((d, ctx) => {
+    const order = ['emailedOn', 'repliedOn', 'demoOn', 'secondCallOn', 'wonOn'] as const;
+    let prev: { field: string; date: string } = { field: 'emailedOn', date: d.emailedOn };
+    for (const field of order.slice(1)) {
+      const date = d[field];
+      if (!date) continue;
+      if (date < prev.date) {
+        ctx.addIssue({ code: 'custom', path: [field], message: 'Must be on or after the earlier stage dates' });
+      }
+      prev = { field, date };
+    }
+    if (d.lostOn && d.lostOn < d.emailedOn) {
+      ctx.addIssue({ code: 'custom', path: ['lostOn'], message: 'Must be on or after the outreach date' });
+    }
+    if (d.wonOn && d.lostOn) {
+      ctx.addIssue({ code: 'custom', path: ['lostOn'], message: 'A prospect cannot be both won and lost' });
+    }
+    if (d.contractValue !== null && !d.wonOn) {
+      ctx.addIssue({ code: 'custom', path: ['contractValue'], message: 'Set a contract date to record a contract value' });
+    }
+  })
+  .transform(({ contractValue, ...d }) => ({ ...d, contractValueMinor: contractValue }));
+export type ProspectInput = z.output<typeof prospectInputSchema>;
+
+// ---------------------------------------------------------------------------
 // seasons
 
 export const seasonInputSchema = z

@@ -3,6 +3,7 @@ export * from './competitions';
 export * from './pages';
 export * from './boards';
 export * from './ledger';
+export * from './pipeline';
 export * from './discussion';
 export * from './resources';
 export * from './agents';

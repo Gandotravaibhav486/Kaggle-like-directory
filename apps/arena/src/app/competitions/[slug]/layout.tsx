@@ -32,7 +32,12 @@ export default async function CompetitionLayout({
     { href: `/competitions/${slug}/rules`, label: 'Rules' },
     { href: `/competitions/${slug}/timeline`, label: 'Timeline' },
     { href: `/competitions/${slug}/leaderboard`, label: 'Leaderboard' },
-    ...(viewer.isOwner ? [{ href: `/competitions/${slug}/ledger`, label: 'Ledger' }] : []),
+    ...(viewer.isOwner
+      ? [
+          { href: `/competitions/${slug}/ledger`, label: 'Ledger' },
+          { href: `/competitions/${slug}/pipeline`, label: 'Pipeline' },
+        ]
+      : []),
     { href: `${LAB_URL}/competitions/${slug}/discussion`, label: 'Discussion ↗', external: true },
     { href: `${LAB_URL}/competitions/${slug}/data`, label: 'Data ↗', external: true },
   ];
